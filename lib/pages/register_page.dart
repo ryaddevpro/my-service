@@ -6,7 +6,7 @@ import 'package:my_service/pages/login_page.dart';
 import 'package:flutter/gestures.dart'; // Make sure to import gestures package
 
 class RegisterPage extends StatefulWidget {
-  RegisterPage({super.key});
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -30,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
 
   // sign user in method
-  void LoginInUser() {}
+  void _LoginInUser() {}
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: MyButton(
-                    onTap: LoginInUser,
+                    onTap: _LoginInUser,
                     text: "Register",
                   ),
                 ),
@@ -90,12 +90,12 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _buildLogo() {
-    return Icon(
-      Icons.lock,
-      size: 75,
-    );
-  }
+  // Widget _buildLogo() {
+  //   return Icon(
+  //     Icons.lock,
+  //     size: 75,
+  //   );
+  // }
 
   Widget _buildWelcomeText() {
     return Text(
@@ -144,92 +144,92 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _buildForgotPassword() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Text(
-            'Forgot password!',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 16.0,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildForgotPassword() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 25.0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.end,
+  //       children: [
+  //         Text(
+  //           'Forgot password!',
+  //           style: TextStyle(
+  //             color: Colors.grey[600],
+  //             fontSize: 16.0,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildContinueWithDivider() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: Divider(
-              color: Colors.grey[400],
-              thickness: 0.5,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Text(
-              "Or continue with",
-              style: TextStyle(
-                color: Colors.grey[700],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Divider(
-              color: Colors.grey[400],
-              thickness: 0.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildContinueWithDivider() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 25.0),
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           child: Divider(
+  //             color: Colors.grey[400],
+  //             thickness: 0.5,
+  //           ),
+  //         ),
+  //         Padding(
+  //           padding: const EdgeInsets.symmetric(horizontal: 10.0),
+  //           child: Text(
+  //             "Or continue with",
+  //             style: TextStyle(
+  //               color: Colors.grey[700],
+  //             ),
+  //           ),
+  //         ),
+  //         Expanded(
+  //           child: Divider(
+  //             color: Colors.grey[400],
+  //             thickness: 0.5,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildSocialLoginButtons() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () => {},
-              style: ElevatedButton.styleFrom(
-                padding:
-                    EdgeInsets.all(16), // Optional: adjust the button padding
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Image.network("https://i.imgur.com/uHm3CLH.png"),
-                    ],
-                  ),
-                  Positioned(
-                    child: Text(
-                      "Google",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold, // Optional: make text bold
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildSocialLoginButtons() {
+  //   return Container(
+  //     margin: EdgeInsets.symmetric(horizontal: 20),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Expanded(
+  //           child: ElevatedButton(
+  //             onPressed: () => {},
+  //             style: ElevatedButton.styleFrom(
+  //               padding:
+  //                   EdgeInsets.all(16), // Optional: adjust the button padding
+  //             ),
+  //             child: Stack(
+  //               alignment: Alignment.center,
+  //               children: [
+  //                 Row(
+  //                   children: [
+  //                     Image.network("https://i.imgur.com/uHm3CLH.png"),
+  //                   ],
+  //                 ),
+  //                 Positioned(
+  //                   child: Text(
+  //                     "Google",
+  //                     style: TextStyle(
+  //                       fontWeight: FontWeight.bold, // Optional: make text bold
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildPrivacyText(BuildContext context) {
     return Padding(

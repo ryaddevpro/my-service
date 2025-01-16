@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_service/pages/login_page.dart';
 import 'package:my_service/pages/register_page.dart';
 
 void main() {

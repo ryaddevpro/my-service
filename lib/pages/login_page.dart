@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_service/components/my_button.dart';
 import 'package:my_service/components/my_textfield.dart';
+import 'package:my_service/pages/dashboard_page.dart';
 import 'package:my_service/pages/register_page.dart';
 import 'package:flutter/gestures.dart'; // Make sure to import gestures package
 
@@ -12,7 +13,12 @@ class LoginPage extends StatelessWidget {
   final passwordController = TextEditingController();
 
   // sign user in method
-  void LoginInUser() {}
+  void LoginInUser(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DashboardPage()),
+    );
+  }
 
   void redirectToRegister(BuildContext context) {
     Navigator.push(
@@ -44,7 +50,7 @@ class LoginPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: MyButton(
-                    onTap: LoginInUser,
+                    onTap: () => LoginInUser(context),
                     text: "Login",
                   ),
                 ),
@@ -120,74 +126,74 @@ Widget _buildForgotPassword() {
   );
 }
 
-Widget _buildContinueWithDivider() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-    child: Row(
-      children: [
-        Expanded(
-          child: Divider(
-            color: Colors.grey[400],
-            thickness: 0.5,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Text(
-            "Or continue with",
-            style: TextStyle(
-              color: Colors.grey[700],
-            ),
-          ),
-        ),
-        Expanded(
-          child: Divider(
-            color: Colors.grey[400],
-            thickness: 0.5,
-          ),
-        ),
-      ],
-    ),
-  );
-}
+// Widget _buildContinueWithDivider() {
+//   return Padding(
+//     padding: const EdgeInsets.symmetric(horizontal: 25.0),
+//     child: Row(
+//       children: [
+//         Expanded(
+//           child: Divider(
+//             color: Colors.grey[400],
+//             thickness: 0.5,
+//           ),
+//         ),
+//         Padding(
+//           padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//           child: Text(
+//             "Or continue with",
+//             style: TextStyle(
+//               color: Colors.grey[700],
+//             ),
+//           ),
+//         ),
+//         Expanded(
+//           child: Divider(
+//             color: Colors.grey[400],
+//             thickness: 0.5,
+//           ),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
-Widget _buildSocialLoginButtons() {
-  return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () => {},
-            style: ElevatedButton.styleFrom(
-              padding:
-                  EdgeInsets.all(16), // Optional: adjust the button padding
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Row(
-                  children: [
-                    Image.network("https://i.imgur.com/uHm3CLH.png"),
-                  ],
-                ),
-                Positioned(
-                  child: Text(
-                    "Google",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold, // Optional: make text bold
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
+// Widget _buildSocialLoginButtons() {
+//   return Container(
+//     margin: EdgeInsets.symmetric(horizontal: 20),
+//     child: Row(
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       children: [
+//         Expanded(
+//           child: ElevatedButton(
+//             onPressed: () => {},
+//             style: ElevatedButton.styleFrom(
+//               padding:
+//                   EdgeInsets.all(16), // Optional: adjust the button padding
+//             ),
+//             child: Stack(
+//               alignment: Alignment.center,
+//               children: [
+//                 Row(
+//                   children: [
+//                     Image.network("https://i.imgur.com/uHm3CLH.png"),
+//                   ],
+//                 ),
+//                 Positioned(
+//                   child: Text(
+//                     "Google",
+//                     style: TextStyle(
+//                       fontWeight: FontWeight.bold, // Optional: make text bold
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
 Widget _buildPrivacyText(BuildContext context) {
   return Padding(
