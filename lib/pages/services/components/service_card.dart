@@ -9,7 +9,7 @@ class ServiceCard extends StatelessWidget {
   final double rating;
   final int index;
 
-  ServiceCard({
+  const ServiceCard({super.key, 
     required this.imageUrl,
     required this.productName,
     required this.productDescription,

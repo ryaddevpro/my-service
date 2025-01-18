@@ -6,7 +6,7 @@ class ServiceDetailPage extends StatelessWidget {
   final String productDescription;
   final double rating;
 
-  ServiceDetailPage({
+  const ServiceDetailPage({super.key, 
     required this.imageUrl,
     required this.productName,
     required this.productDescription,

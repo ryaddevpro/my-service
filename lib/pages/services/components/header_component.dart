@@ -6,9 +6,9 @@ class HeaderComponent extends StatelessWidget {
   final TextEditingController searchController;
 
   const HeaderComponent({
-    Key? key,
+    super.key,
     required this.searchController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

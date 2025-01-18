@@ -1,78 +1,125 @@
 import 'package:flutter/material.dart';
-import 'package:my_service/components/my_button.dart';
 import 'package:my_service/components/my_textfield.dart';
+import 'package:my_service/components/my_button.dart';
 import 'package:my_service/pages/dashboard_page.dart';
 import 'package:my_service/pages/register_page.dart';
-import 'package:flutter/gestures.dart'; // Make sure to import gestures package
+
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
-  // text editing controllers
+  // Controllers
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  // sign user in method
-  void LoginInUser(BuildContext context) {
+  // Login method
+  void loginUser(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DashboardPage()),
     );
   }
 
+  // Redirect to Register Page
   void redirectToRegister(BuildContext context) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RegisterPage(),
-        ));
+      context,
+      MaterialPageRoute(builder: (context) => RegisterPage()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 35),
+                const SizedBox(height: 40),
                 _buildLogo(),
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
                 _buildWelcomeText(),
                 const SizedBox(height: 25),
-                _buildTextField(usernameController, 'Username', false),
-                const SizedBox(height: 25),
-                _buildTextField(passwordController, 'Password', true),
-                const SizedBox(height: 20),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: MyButton(
-                    onTap: () => LoginInUser(context),
-                    text: "Login",
+                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                  child: MyTextfield(
+                    controller: usernameController,
+                    hintText: 'Username',
+                    obscureText: false,
                   ),
                 ),
-                const SizedBox(height: 15),
-                _buildForgotPassword(),
-                const SizedBox(height: 5),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: MyButton(
-                    textColor: Colors.black,
-                    backgroundColor: const Color.fromARGB(255, 201, 201, 201),
-                    onTap: () => redirectToRegister(context),
-                    text: "Create Account",
+                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                  child: MyTextfield(
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
                   ),
                 ),
-                // const SizedBox(height: 25),
-                // _buildContinueWithDivider(),
-                // const SizedBox(height: 10),
-                // _buildSocialLoginButtons(),
-                const SizedBox(height: 25),
+                Padding(
+                  padding: const EdgeInsets.only(top: 24.0, right: 24.0, left: 24.0),
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+
+
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterPage()),
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        "Create Account",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+
+
+                const SizedBox(height: 16),
                 _buildPrivacyText(context),
-                const SizedBox(height: 50),
+                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -80,167 +127,58 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
-}
 
-Widget _buildLogo() {
-  return Icon(
-    Icons.lock,
-    size: 75,
-  );
-}
+  Widget _buildLogo() {
+    return const Icon(
+      Icons.lock,
+      size: 75,
+    );
+  }
 
-Widget _buildWelcomeText() {
-  return Text(
-    "Login to My Service",
-    style: TextStyle(
-      color: Colors.grey[700],
-      fontSize: 24,
-    ),
-  );
-}
+  Widget _buildWelcomeText() {
+    return const Text(
+      "Login to My Service",
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
 
-Widget _buildTextField(
-    TextEditingController controller, String hintText, bool obscureText) {
-  return MyTextfield(
-    controller: controller,
-    hintText: hintText,
-    obscureText: obscureText,
-  );
-}
-
-Widget _buildForgotPassword() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(
-          'Forgot password!',
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 16.0,
+  Widget _buildPrivacyText(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        children: [
+          Text(
+            "By clicking continue, you agree to our ",
+            style: TextStyle(color: Colors.grey[700]),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
-// Widget _buildContinueWithDivider() {
-//   return Padding(
-//     padding: const EdgeInsets.symmetric(horizontal: 25.0),
-//     child: Row(
-//       children: [
-//         Expanded(
-//           child: Divider(
-//             color: Colors.grey[400],
-//             thickness: 0.5,
-//           ),
-//         ),
-//         Padding(
-//           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-//           child: Text(
-//             "Or continue with",
-//             style: TextStyle(
-//               color: Colors.grey[700],
-//             ),
-//           ),
-//         ),
-//         Expanded(
-//           child: Divider(
-//             color: Colors.grey[400],
-//             thickness: 0.5,
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-// }
-
-// Widget _buildSocialLoginButtons() {
-//   return Container(
-//     margin: EdgeInsets.symmetric(horizontal: 20),
-//     child: Row(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         Expanded(
-//           child: ElevatedButton(
-//             onPressed: () => {},
-//             style: ElevatedButton.styleFrom(
-//               padding:
-//                   EdgeInsets.all(16), // Optional: adjust the button padding
-//             ),
-//             child: Stack(
-//               alignment: Alignment.center,
-//               children: [
-//                 Row(
-//                   children: [
-//                     Image.network("https://i.imgur.com/uHm3CLH.png"),
-//                   ],
-//                 ),
-//                 Positioned(
-//                   child: Text(
-//                     "Google",
-//                     style: TextStyle(
-//                       fontWeight: FontWeight.bold, // Optional: make text bold
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-// }
-
-Widget _buildPrivacyText(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-    child: Wrap(
-      alignment: WrapAlignment.center,
-      children: [
-        RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: TextStyle(
-                color: Colors.grey[700]), // Default style for the text
-
-            children: [
-              TextSpan(
-                text: "By clicking continue, you agree to our ",
+          GestureDetector(
+            onTap: () {},
+            child: const Text(
+              "Terms of Service",
+              style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
               ),
-              TextSpan(
-                text: "Terms of Service",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RegisterPage(),
-                      ),
-                    );
-                  },
-              ),
-              TextSpan(
-                text: " and ",
-              ),
-              TextSpan(
-                text: "Privacy Policy",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+          const Text(" and "),
+          GestureDetector(
+            onTap: () {},
+            child: const Text(
+              "Privacy Policy",
+              style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

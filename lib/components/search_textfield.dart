@@ -7,7 +7,7 @@ class SearchTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final TextStyle? style;
 
-  SearchTextField({
+  const SearchTextField({super.key, 
     required this.controller,
     this.hintText = 'Search here...',
     this.prefixIcon = Icons.search,

@@ -6,7 +6,7 @@ class BasePage extends StatelessWidget {
   final Widget body;
   final String title;
 
-  BasePage({required this.body, required this.title});
+  const BasePage({super.key, required this.body, required this.title});
 
   @override
   Widget build(BuildContext context) {
