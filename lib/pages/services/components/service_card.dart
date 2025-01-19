@@ -9,7 +9,8 @@ class ServiceCard extends StatelessWidget {
   final double rating;
   final int index;
 
-  const ServiceCard({super.key, 
+  const ServiceCard({
+    super.key,
     required this.imageUrl,
     required this.productName,
     required this.productDescription,
@@ -21,17 +22,12 @@ class ServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ServiceDetailPage(
-              imageUrl: imageUrl,
-              productName: productName,
-              productDescription: productDescription,
-              rating: rating,
-            ),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => ServiceDetailPage(service,),
+        //   ),
+        // );
       },
       child: Card(
         elevation: 8,

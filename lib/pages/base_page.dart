@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_service/pages/addservice.dart';
+import 'package:my_service/pages/login_page.dart';
+import 'package:my_service/pages/prestataire_dashboard.dart';
+import 'package:my_service/pages/profile.dart';
 import 'package:my_service/pages/services/services_page.dart';
 import 'package:my_service/pages/dashboard_page.dart';
 
@@ -27,7 +31,7 @@ class BasePage extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DashboardPage(),
+                        builder: (context) => PrestataireDashboard(),
                       ));
                 },
               ),
@@ -44,14 +48,39 @@ class BasePage extends StatelessWidget {
               },
             ),
             ListTile(
+              leading: Icon(Icons.add),
+              title: const Text('Add new services'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddServicePage(),
+                    ));
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {},
+              title: const Text('Profile'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilPage(),
+                    ));
+              },
             ),
             ListTile(
               leading: Icon(Icons.logout),
               title: const Text('Logout'),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                  (route) => false, // This will remove all previous routes
+                );
+              },
             ),
           ],
         ),

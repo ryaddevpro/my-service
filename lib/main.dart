@@ -4,6 +4,7 @@ import 'package:my_service/DAO/service.dart';
 import 'package:my_service/DAO/utilisateur.dart';
 import 'package:my_service/models/service.dart';
 import 'package:my_service/models/utilisateur.dart';
+import 'package:my_service/pages/addservice.dart';
 import 'package:my_service/pages/intro_page.dart';
 import 'package:my_service/pages/prestataire_dashboard.dart';
 import 'package:my_service/pages/services/services_page.dart';
@@ -31,16 +32,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-     return MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: MyApp.scaffoldMessengerKey, // Use the key here
 
-      home: ServicesPage(),
+      home: IntroPage(),
     );
   }
 }

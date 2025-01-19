@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:my_service/DAO/service.dart';
-import 'package:my_service/DAO/utilisateur.dart';
 import 'package:my_service/models/service.dart';
-import 'package:my_service/models/utilisateur.dart';
+import 'package:my_service/pages/addservice.dart';
 import 'package:my_service/pages/base_page.dart';
+import 'package:my_service/pages/services/detail/detail_page.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:my_service/utils/shared_preferences.dart';
 
 class ServicesPage extends StatefulWidget {
   ServicesPage({super.key});
@@ -30,6 +34,7 @@ class _ServicesPageState extends State<ServicesPage> {
   void fetchServices() async {
     final serviceDAO = ServiceDAO();
     final List<Service> allServices = await serviceDAO.getAllServices();
+    print("allServices[0].image");
 
     setState(() {
       services = allServices;
@@ -52,6 +57,18 @@ class _ServicesPageState extends State<ServicesPage> {
 
   // Function to handle pull-to-refresh
   Future<void> _onRefresh() async {
+    fetchServices();
+  }
+
+  // Get the stored user ID
+  Future<String?> getUserId() async {
+    return await SharedPreferencesHelper.getValue('userId');
+  }
+
+  void deleteService(Service? service) async {
+    final String? userId = await getUserId();
+    final serviceDAO = ServiceDAO();
+    serviceDAO.deleteServiceById("${service?.id}");
     fetchServices();
   }
 
@@ -96,9 +113,10 @@ class _ServicesPageState extends State<ServicesPage> {
                   Center(child: CircularProgressIndicator())
                 else
                   // Display the filtered services list
-                  ...filteredServices
-                      .map((service) => _buildServiceCard(service))
-                      .toList(),
+                  ...filteredServices.map((service) {
+                    print(service);
+                    return _buildServiceCard(service);
+                  }).toList(),
               ],
             ),
           ),
@@ -138,12 +156,12 @@ class _ServicesPageState extends State<ServicesPage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Service Image Placeholder (replace with real image URL)
+            // Service Image Placeholder (if the image is in Base64 format)
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: service.image != null && service.image!.isNotEmpty
-                  ? Image.network(
-                      service.image!,
+                  ? Image.memory(
+                      base64Decode(service.image!),
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover,
@@ -196,20 +214,91 @@ class _ServicesPageState extends State<ServicesPage> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                Row(
+                  spacing: 4,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return ServiceDetailPage(service: service);
+                        }));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                      ),
+                      child: Text(
+                        "View",
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
                     ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  child: Text(
-                    "View",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
+                  ],
+                ),
+                FutureBuilder<String?>(
+                  future: getUserId(), // Async call to get user ID
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(); // Show loading while fetching user ID
+                    }
+
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    final userId = snapshot.data;
+
+                    return service.cree_par == userId
+                        ? Row(
+                            spacing: 4.0,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  deleteService(service);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.redAccent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                ),
+                                child: Text(
+                                  "Delete",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 14),
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return AddServicePage(service: service);
+                                  }));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepPurpleAccent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                ),
+                                child: Text(
+                                  "Update",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 14),
+                                ),
+                              )
+                            ],
+                          )
+                        : Container(); // Return an empty container if user IDs don't match
+                  },
                 ),
               ],
             ),
