@@ -1,3 +1,5 @@
+import 'package:my_service/models/service.dart';
+
 enum ROLE_ENUM { admin, prestataire, client }
 
 class Utilisateur {
@@ -8,6 +10,9 @@ class Utilisateur {
   final String? password;
   final ROLE_ENUM? role;
   final String? login;
+    final List<Service>? services; // Optional: List of services created by the user
+
+  
 
   Utilisateur({
     this.id,
@@ -17,6 +22,8 @@ class Utilisateur {
     this.password,
     this.role,
     this.login,
+        this.services, // Initialize with a list of services created by the user
+
   });
 
   // To map data from Supabase to User object
