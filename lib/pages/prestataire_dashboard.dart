@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_service/DAO/service.dart';
-import 'package:my_service/DAO/utilisateur.dart';
-import 'package:my_service/models/service.dart';
-import 'package:my_service/models/utilisateur.dart';
 
 class PrestataireDashboard extends StatefulWidget {
   const PrestataireDashboard({super.key});
