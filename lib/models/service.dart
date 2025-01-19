@@ -5,6 +5,7 @@ class Service {
   final String? categorie;
   final String? cree_par;
   final double? prix;
+  final String? image;
 
   Service(
       {this.id,
@@ -12,6 +13,7 @@ class Service {
       this.description,
       this.categorie,
       this.cree_par,
+      this.image,
       this.prix});
 
   // To map data from Supabase to Service object
@@ -23,6 +25,7 @@ class Service {
       description: json['description'] ?? '',
       categorie: json['categorie'] ?? '',
       cree_par: json['cree_par'] ?? '',
+      image: json['image'] ?? '',
     );
   }
   // To map Service object to a JSON object for Supabase
@@ -31,6 +34,10 @@ class Service {
 
     if (nom != null) {
       data['nom'] = nom;
+    }
+
+    if (image != null) {
+      data['image'] = image;
     }
 
     // Only include the 'id' of 'cree_par' (Utilisateur)

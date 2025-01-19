@@ -56,7 +56,7 @@ class BasePage extends StatelessWidget {
           ],
         ),
       ),
-      body: SingleChildScrollView(child: body),
+      body: body,
     );
   }
 }
