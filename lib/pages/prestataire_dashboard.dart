@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:my_service/pages/addservice.dart';
 import 'package:my_service/pages/avis_page.dart';
 import 'package:my_service/pages/disponibilite.dart';
 import 'package:my_service/pages/profile.dart';
 import 'package:my_service/pages/reservation.dart';
-import 'profile.dart';
-import 'disponibilite.dart';
-import 'reservation.dart';
-import 'avis_page.dart';
+ // Import the Add Service page
+
 
 class PrestataireDashboard extends StatefulWidget {
   const PrestataireDashboard({super.key});
@@ -16,11 +15,8 @@ class PrestataireDashboard extends StatefulWidget {
 }
 
 class _PrestataireDashboardState extends State<PrestataireDashboard> {
-  
-
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -91,6 +87,19 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
                       );
                     },
                   ),
+                  // Add the new "Ajouter un Service" card here
+                  _buildDashboardCard(
+                    icon: Icons.add_circle_outline,
+                    title: 'Ajouter un Service',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddServicePage(), // Navigate to Add Service page
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -100,6 +109,7 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
     );
   }
 
+  // Method to build the dashboard card
   Widget _buildDashboardCard({
     required IconData icon,
     required String title,
