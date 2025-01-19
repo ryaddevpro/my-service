@@ -1,23 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:my_service/DAO/utilisateur.dart';
 import 'package:my_service/components/my_textfield.dart';
-import 'package:my_service/components/my_button.dart';
 import 'package:my_service/pages/dashboard_page.dart';
+import 'package:my_service/pages/prestataire_dashboard.dart';
 import 'package:my_service/pages/register_page.dart';
+import 'package:my_service/utils/snack_msg.dart';
 
-
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   // Controllers
-  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+
   final passwordController = TextEditingController();
 
   // Login method
-  void loginUser(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => DashboardPage()),
-    );
+  void loginUser(BuildContext context) async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    final utilisateurDAO = UtilisateurDAO();
+    final isSuccess = await utilisateurDAO.loginUser(email, password);
+
+    if (isSuccess) {
+      // Navigate to the Dashboard if login is successful
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PrestataireDashboard()),
+      );
+    } else {
+      // Optionally show an error message or perform another action on failure
+      showMessage("Login failed. Please check your credentials.",
+          isError: true);
+    }
   }
 
   // Redirect to Register Page
@@ -44,15 +64,17 @@ class LoginPage extends StatelessWidget {
                 _buildWelcomeText(),
                 const SizedBox(height: 25),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 8.0),
                   child: MyTextfield(
-                    controller: usernameController,
-                    hintText: 'Username',
+                    controller: emailController,
+                    hintText: 'Email',
                     obscureText: false,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 8.0),
                   child: MyTextfield(
                     controller: passwordController,
                     hintText: 'Password',
@@ -60,12 +82,10 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 24.0, right: 24.0, left: 24.0),
+                  padding:
+                      const EdgeInsets.only(top: 24.0, right: 24.0, left: 24.0),
                   child: GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    ),
+                    onTap: () => loginUser(context),
                     child: Container(
                       width: double.infinity,
                       alignment: Alignment.center,
@@ -85,9 +105,6 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
-
-
                 Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: GestureDetector(
@@ -114,9 +131,6 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
-
-
                 const SizedBox(height: 16),
                 _buildPrivacyText(context),
                 const SizedBox(height: 40),

@@ -1,19 +1,60 @@
 import 'package:flutter/material.dart';
-
+import 'package:my_service/DAO/utilisateur.dart';
 import 'package:my_service/components/my_textfield.dart';
+import 'package:my_service/models/utilisateur.dart';
 import 'package:my_service/pages/login_page.dart';
+import 'package:my_service/utils/snack_msg.dart';
 
 // ignore: must_be_immutable
-class RegisterPage extends StatelessWidget {
-  RegisterPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final utilisateurDAO = UtilisateurDAO();
 
   // Controllers
-  final usernameController = TextEditingController();
+  final nomController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  String? selectedRole; // Variable to hold the selected value
+  ROLE_ENUM? selectedRole;
+
+  void navigateToLogin() {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) {
+        return LoginPage();
+      },
+    ));
+  }
+
+  void handleRegister() async {
+    print("-----------------------------------------------");
+    if (passwordController.text != confirmPasswordController.text) {
+      showMessage('Passwords do not match', isError: true);
+      return;
+    }
+
+    if (selectedRole == null) {
+      showMessage('Please select a role', isError: true);
+      return;
+    }
+
+    Utilisateur newUser = Utilisateur(
+      email: emailController.text,
+      nom: nomController.text,
+      password: passwordController.text,
+      role: selectedRole,
+    );
+    final bool user = await utilisateurDAO.createUser(newUser);
+    if (user) {
+      navigateToLogin();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +66,6 @@ class RegisterPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Title
                 const Padding(
                   padding: EdgeInsets.only(top: 40.0, bottom: 20.0),
                   child: Text(
@@ -37,76 +77,73 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                // Username Field
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 8.0),
                   child: MyTextfield(
-                    controller: usernameController,
+                    controller: nomController,
                     hintText: 'Username',
                     obscureText: false,
                   ),
                 ),
-
-                // Email Field
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 8.0),
                   child: MyTextfield(
                     controller: emailController,
                     hintText: 'Email',
                     obscureText: false,
                   ),
                 ),
-
-                // Password Field
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 8.0),
                   child: MyTextfield(
                     controller: passwordController,
                     hintText: 'Password',
                     obscureText: true,
                   ),
                 ),
-
-                // Confirm Password Field
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 8.0),
                   child: MyTextfield(
                     controller: confirmPasswordController,
                     hintText: 'Confirm password',
                     obscureText: true,
                   ),
                 ),
-
-                // Role Dropdown
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                  child: DropdownButtonFormField<String>(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 8.0),
+                  child: DropdownButtonFormField<ROLE_ENUM>(
                     value: selectedRole,
                     decoration: InputDecoration(
                       hintText: 'Select Role',
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 12.0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    items: const [
-                      DropdownMenuItem(value: "client", child: Text("Client")),
-                      DropdownMenuItem(value: "vendeur", child: Text("Vendeur")),
-                    ],
-                    onChanged: (value) {
-                      selectedRole = value;
+                    items: ROLE_ENUM.values.map((ROLE_ENUM role) {
+                      return DropdownMenuItem<ROLE_ENUM>(
+                        value: role,
+                        child: Text(role.toString().split('.').last),
+                      );
+                    }).toList(),
+                    onChanged: (ROLE_ENUM? value) {
+                      setState(() {
+                        selectedRole = value;
+                      });
                     },
                   ),
                 ),
-
-                
-
-                // Register Button
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 16.0),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: handleRegister,
                     child: Container(
                       width: double.infinity,
                       alignment: Alignment.center,
@@ -126,8 +163,6 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                // Login Button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: GestureDetector(
@@ -154,10 +189,9 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                // Privacy Text
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 24.0),
                   child: Wrap(
                     alignment: WrapAlignment.center,
                     children: [
