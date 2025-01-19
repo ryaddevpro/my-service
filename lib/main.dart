@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:my_service/pages/intro_page.dart';
+import 'package:my_service/pages/prestataire_dashboard.dart';
 import 'package:my_service/pages/services/services_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // import 'package:my_service/pages/services/services_page.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: scaffoldMessengerKey, // Use the key here
 
-      home: IntroPage(),
+      home: PrestataireDashboard(),
     );
   }
 }
