@@ -5,6 +5,8 @@ import 'package:my_service/DAO/utilisateur.dart';
 import 'package:my_service/models/service.dart';
 import 'package:my_service/models/utilisateur.dart';
 import 'package:my_service/pages/intro_page.dart';
+import 'package:my_service/pages/prestataire_dashboard.dart';
+import 'package:my_service/pages/services/services_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // import 'package:my_service/pages/services/services_page.dart';
 
@@ -69,7 +71,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: MyApp.scaffoldMessengerKey, // Use the key here
 
-      home: IntroPage(),
+      home: PrestataireDashboard(),
     );
   }
 }
