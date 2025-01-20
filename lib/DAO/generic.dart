@@ -16,26 +16,27 @@ class GenericDAO<T> {
       return [];
     }
   }
-// Fetch a record by a specific field
-Future<T?> getByField(String field, String value,
-    T Function(Map<String, dynamic>) fromJson) async {
-  try {
-    final response = await supabase.from(tableName).select().eq(field, value).single();
 
-    // Check if response is valid and not null
-    if (response != null) {
-      return fromJson(response);
-    } else {
-      print("No record found for field $field with value $value");
+  // Fetch a record by a specific field
+  Future<T?> getByField(String field, String value,
+      T Function(Map<String, dynamic>) fromJson) async {
+    try {
+      final response =
+          await supabase.from(tableName).select().eq(field, value).single();
+
+      // Check if response is valid and not null
+      if (response != null) {
+        return fromJson(response);
+      } else {
+        print("No record found for field $field with value $value");
+        return null;
+      }
+    } catch (e) {
+      // Handle errors (e.g., network issues, database errors)
+      print("Error fetching record by field $field: $e");
       return null;
     }
-  } catch (e) {
-    // Handle errors (e.g., network issues, database errors)
-    print("Error fetching record by field $field: $e");
-    return null;
   }
-}
-
 
   // Create a record
   Future<bool> create(Map<String, dynamic> json) {
@@ -49,17 +50,31 @@ Future<T?> getByField(String field, String value,
   }
 
   // Update a record
+  // Update a record
   Future<bool> update(
       String field, dynamic value, Map<String, dynamic> json) async {
-    await supabase.from(tableName).update(json).eq(field, value);
-    return true;
+    try {
+      final response =
+          await supabase.from(tableName).update(json).eq(field, value);
+
+      if (response != null) {
+        print("Error updating record: ${response.error!.message}");
+        return false;
+      }
+
+      // If successful
+      print("Record updated successfully");
+      return true;
+    } catch (e) {
+      // Handle any errors (e.g., network issues, database errors)
+      print("Error updating record in $tableName: $e");
+      return false;
+    }
   }
 
   // Delete a record by a specific field
   Future<bool> delete(String field, dynamic value) async {
     final response = await supabase.from(tableName).delete().eq(field, value);
-    print("response delete(String field, dynamic value)");
-    print(response);
     if (response != null) {
       return false;
     }

@@ -26,6 +26,9 @@ class Service {
       categorie: json['categorie'] ?? '',
       cree_par: json['cree_par'] ?? '',
       image: json['image'] ?? '',
+      prix: json['prix'] is int
+          ? (json['prix'] as int).toDouble()
+          : json['prix'] as double?,
     );
   }
   // To map Service object to a JSON object for Supabase

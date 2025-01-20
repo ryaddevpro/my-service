@@ -81,6 +81,7 @@ class UtilisateurDAO {
       await SharedPreferencesHelper.storeValue('userName', existingUser.nom);
 
       await SharedPreferencesHelper.storeValue('user', existingUser);
+      print(existingUser.id);
 
       showMessage("Login successful! Welcome back, ${existingUser.nom}");
       return true;

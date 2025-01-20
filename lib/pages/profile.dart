@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_service/DAO/utilisateur.dart';
+import 'package:my_service/models/utilisateur.dart';
+import 'package:my_service/utils/shared_preferences.dart';
+import 'package:my_service/utils/snack_msg.dart';
 
 class ProfilPage extends StatefulWidget {
   const ProfilPage({super.key});
@@ -16,38 +20,84 @@ class _ProfilPageState extends State<ProfilPage> {
   final TextEditingController _professionController = TextEditingController();
 
   // Sample data (initial values)
-  String firstName = 'John';
-  String lastName = 'Doe';
-  String phone = '+1234567890';
-  String email = 'johndoe@example.com';
-  String profession = 'Web Developer';
+  String firstName = '';
+  String lastName = '';
+  String phone = '';
+  String email = '';
+  String userId = '';
+  Utilisateur? user;
 
   @override
   void initState() {
     super.initState();
-
-    // Initializing controllers with the sample data
-    _firstNameController.text = firstName;
-    _lastNameController.text = lastName;
-    _phoneController.text = phone;
-    _emailController.text = email;
-    _professionController.text = profession;
+    _getUserId(); // Fetch user info
   }
 
-  void _saveProfile() {
-    setState(() {
-      // Updating profile with the new values from the controllers
-      firstName = _firstNameController.text;
-      lastName = _lastNameController.text;
-      phone = _phoneController.text;
-      email = _emailController.text;
-      profession = _professionController.text;
-    });
+  // Fetch user ID and data from SharedPreferences
+  _getUserId() async {
+    final storedUserId = await SharedPreferencesHelper.getValue('userId');
+    if (storedUserId != null) {
+      UtilisateurDAO userDAO = UtilisateurDAO();
+      user = await userDAO.getUserById(storedUserId);
 
-    // You can save to a database or perform additional actions here
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profile updated successfully!')),
+      setState(() {
+        userId = storedUserId;
+        firstName = user?.nom ?? '';
+        phone = user?.telephone ?? '';
+        email = user?.email ?? '';
+
+        // Set initial text in controllers
+        _firstNameController.text = firstName;
+        _lastNameController.text = lastName;
+        _phoneController.text = phone;
+        _emailController.text = email;
+      });
+    } else {
+      showMessage("User ID is missing", isError: true);
+    }
+  }
+
+  // Save updated profile
+  void _saveProfile() async {
+    if (userId.isEmpty) {
+      showMessage("User ID is missing", isError: true);
+      return;
+    }
+
+    // Validate fields (Optional: Add specific validation if required)
+    if (_emailController.text.isEmpty || !_emailController.text.contains('@')) {
+      showMessage("Please enter a valid email address", isError: true);
+      return;
+    }
+
+    if (_phoneController.text.isEmpty || _phoneController.text.length < 10) {
+      showMessage("Please enter a valid phone number", isError: true);
+      return;
+    }
+
+    // Create the updated Utilisateur object
+    final updatedUser = Utilisateur(
+      id: userId,
+      nom: _firstNameController.text,
+      email: _emailController.text,
+      telephone: _phoneController.text,
+      password: "", // Optional, if updating password
+      role: ROLE_ENUM.client,
+      login: "",
     );
+
+    // Call the updateUser function from UtilisateurDAO
+    bool isUpdated = await UtilisateurDAO().updateUser(userId, updatedUser);
+
+    if (isUpdated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update profile.')),
+      );
+    }
   }
 
   @override
@@ -63,53 +113,24 @@ class _ProfilPageState extends State<ProfilPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // First Name
-              _buildEditableField(
-                label: 'First Name',
-                controller: _firstNameController,
-              ),
+              _buildEditableField('Username', _firstNameController),
               const SizedBox(height: 16),
-
-              // Last Name
               _buildEditableField(
-                label: 'Last Name',
-                controller: _lastNameController,
-              ),
+                  'Phone Number', _phoneController, TextInputType.phone),
               const SizedBox(height: 16),
-
-              // Phone Number
               _buildEditableField(
-                label: 'Phone Number',
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 16),
-
-              // Email
-              _buildEditableField(
-                label: 'Email',
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16),
-
-              // Profession
-              _buildEditableField(
-                label: 'Profession',
-                controller: _professionController,
-              ),
+                  'Email', _emailController, TextInputType.emailAddress),
+              // const SizedBox(height: 16),
+              // _buildEditableField('Profession', _professionController),
               const SizedBox(height: 32),
-
-              // Save Button
               ElevatedButton(
                 onPressed: _saveProfile,
                 child: const Text('Save'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  backgroundColor: Colors.blueAccent, // Accent color
+                      borderRadius: BorderRadius.circular(8)),
+                  backgroundColor: Colors.blueAccent,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -121,20 +142,16 @@ class _ProfilPageState extends State<ProfilPage> {
   }
 
   // Reusable method to build editable fields
-  Widget _buildEditableField({
-    required String label,
-    required TextEditingController controller,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
+  Widget _buildEditableField(String label, TextEditingController controller,
+      [TextInputType keyboardType = TextInputType.text]) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       ),
     );
   }

@@ -28,7 +28,7 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      title: "Tableau de board",
+      title: "Tableau de bord",
       body: FutureBuilder<Utilisateur?>(
         future: utilisateurFuture,
         builder: (context, snapshot) {
@@ -52,94 +52,19 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bienvenue, ${utilisateur.nom} !',
+                  'Bienvenue : ${utilisateur.role?.name} ${utilisateur.nom} !',
                   style: const TextStyle(
-                      fontSize: 26, fontWeight: FontWeight.bold),
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic),
                 ),
                 const SizedBox(height: 20),
                 Expanded(
                   child: GridView.count(
-                    crossAxisCount: 2, // Number of columns
+                    crossAxisCount: 2,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
-                    children: [
-                      _buildDashboardCard(
-                        icon: Icons.person,
-                        title: 'Profil',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ProfilPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildDashboardCard(
-                        icon: Icons.calendar_today,
-                        title: 'Disponibilités',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const DisponibilitePage(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildDashboardCard(
-                        icon: Icons.receipt,
-                        title: 'Réservations',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ReservationPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildDashboardCard(
-                        icon: Icons.star,
-                        title: 'Avis',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AvisPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      // Add the new "Ajouter un Service" card here
-                      _buildDashboardCard(
-                        icon: Icons.add_circle_outline,
-                        title: 'Ajouter un Service',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  AddServicePage(), // Navigate to Add Service page
-                            ),
-                          );
-                        },
-                      ),
-
-                      _buildDashboardCard(
-                        icon: Icons.add_business,
-                        title: 'Tous nos Services',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ServicesPage(), // Navigate to Add Service page
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                    children: _getDashboardCards(utilisateur.role),
                   ),
                 ),
               ],
@@ -150,12 +75,33 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
     );
   }
 
-  // Method to build the dashboard card
-  Widget _buildDashboardCard({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
+  List<Widget> _getDashboardCards(ROLE_ENUM? role) {
+    final clientCards = [
+      _dashboardCard(Icons.person, 'Profil',
+          () => _navigateTo(context, const ProfilPage())),
+      _dashboardCard(Icons.receipt, 'Réservations',
+          () => _navigateTo(context, ReservationPage())),
+      _dashboardCard(
+          Icons.star, 'Avis', () => _navigateTo(context, AvisPage())),
+      _dashboardCard(Icons.add_business, 'Tous nos Services',
+          () => _navigateTo(context, ServicesPage())),
+    ];
+
+    if (role == ROLE_ENUM.client) {
+      return clientCards;
+    }
+
+    final additionalCards = [
+      _dashboardCard(Icons.calendar_today, 'Disponibilités',
+          () => _navigateTo(context, const DisponibilitePage())),
+      _dashboardCard(Icons.add_circle_outline, 'Ajouter un Service',
+          () => _navigateTo(context, AddServicePage())),
+    ];
+
+    return clientCards + additionalCards;
+  }
+
+  Widget _dashboardCard(IconData icon, String title, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -177,5 +123,9 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
         ),
       ),
     );
+  }
+
+  void _navigateTo(BuildContext context, Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 }

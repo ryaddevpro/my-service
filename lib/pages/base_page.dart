@@ -4,7 +4,6 @@ import 'package:my_service/pages/login_page.dart';
 import 'package:my_service/pages/prestataire_dashboard.dart';
 import 'package:my_service/pages/profile.dart';
 import 'package:my_service/pages/services/services_page.dart';
-import 'package:my_service/pages/dashboard_page.dart';
 
 class BasePage extends StatelessWidget {
   final Widget body;

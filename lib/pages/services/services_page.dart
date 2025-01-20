@@ -5,7 +5,6 @@ import 'package:my_service/pages/addservice.dart';
 import 'package:my_service/pages/base_page.dart';
 import 'package:my_service/pages/services/detail/detail_page.dart';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:my_service/utils/shared_preferences.dart';
 

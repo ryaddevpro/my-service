@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_service/DAO/utilisateur.dart';
 import 'package:my_service/components/my_textfield.dart';
-import 'package:my_service/pages/dashboard_page.dart';
-import 'package:my_service/pages/prestataire_dashboard.dart';
 import 'package:my_service/pages/register_page.dart';
 import 'package:my_service/pages/services/services_page.dart';
 import 'package:my_service/utils/snack_msg.dart';
