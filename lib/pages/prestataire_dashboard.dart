@@ -81,8 +81,8 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
           () => _navigateTo(context, const ProfilPage())),
       _dashboardCard(Icons.receipt, 'Réservations',
           () => _navigateTo(context, ReservationPage())),
-      _dashboardCard(
-          Icons.star, 'Avis', () => _navigateTo(context, AvisPage())),
+      // _dashboardCard(
+      //     Icons.star, 'Avis', () => _navigateTo(context, AvisPage())),
       _dashboardCard(Icons.add_business, 'Tous nos Services',
           () => _navigateTo(context, ServicesPage())),
     ];
@@ -92,8 +92,8 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
     }
 
     final additionalCards = [
-      _dashboardCard(Icons.calendar_today, 'Disponibilités',
-          () => _navigateTo(context, const DisponibilitePage())),
+      // _dashboardCard(Icons.calendar_today, 'Disponibilités',
+      //     () => _navigateTo(context, const DisponibilitePage())),
       _dashboardCard(Icons.add_circle_outline, 'Ajouter un Service',
           () => _navigateTo(context, AddServicePage())),
     ];
