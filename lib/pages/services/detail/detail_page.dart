@@ -8,6 +8,7 @@ import 'package:my_service/DAO/service.dart';
 import 'package:my_service/models/avis.dart';
 import 'package:my_service/models/reservation.dart';
 import 'package:my_service/models/service.dart';
+import 'package:my_service/models/utilisateur.dart';
 import 'package:my_service/utils/shared_preferences.dart';
 import 'package:tuple/tuple.dart';
 
@@ -29,6 +30,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   List<Service> services = [];
   String message = '';
   String? userId;
+  Utilisateur? user;
 
   late Reservation testReservation;
   DateTime? selectedDate;
@@ -41,6 +43,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     super.initState();
     Future.microtask(() async {
       userId = await SharedPreferencesHelper.getValue("userId");
+      user = await SharedPreferencesHelper.getUtilisateur("user");
       if (userId != null) {
         hasReservation =
             await hasExistingReservation(userId!, widget.service.id!);
@@ -153,7 +156,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
       );
 
       bool res = await reservationDAO.createReservation(newReservation);
-      
+
       if (res) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -221,7 +224,9 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                       style: TextStyle(color: Colors.red),
                     ),
                   // Check if the service was created by the current user, hide the buttons if true
-                  if (!hasReservation && widget.service.cree_par != userId) ...[
+                  if (user?.role != ROLE_ENUM.prestataire &&
+                      !hasReservation &&
+                      widget.service.cree_par != userId) ...[
                     ElevatedButton(
                       onPressed: hasReservation ? null : _openDatePicker,
                       style: ElevatedButton.styleFrom(

@@ -6,6 +6,9 @@ class Service {
   final String? cree_par;
   final double? prix;
   final String? image;
+  final String? disponibilite;
+  
+
 
   Service(
       {this.id,
@@ -14,7 +17,8 @@ class Service {
       this.categorie,
       this.cree_par,
       this.image,
-      this.prix});
+      this.prix,
+      this.disponibilite});
 
   // To map data from Supabase to Service object
   // Convert JSON to Service object
@@ -26,6 +30,7 @@ class Service {
       categorie: json['categorie'] ?? '',
       cree_par: json['cree_par'] ?? '',
       image: json['image'] ?? '',
+      disponibilite: json['disponibilite'] ?? '',
       prix: json['prix'] is int
           ? (json['prix'] as int).toDouble()
           : json['prix'] as double?,
@@ -41,6 +46,11 @@ class Service {
 
     if (image != null) {
       data['image'] = image;
+    }
+
+
+ if (disponibilite != null) {
+      data['disponibilite'] = disponibilite;
     }
 
     // Only include the 'id' of 'cree_par' (Utilisateur)

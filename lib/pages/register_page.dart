@@ -126,12 +126,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    items: ROLE_ENUM.values.map((ROLE_ENUM role) {
-                      return DropdownMenuItem<ROLE_ENUM>(
-                        value: role,
-                        child: Text(role.toString().split('.').last),
-                      );
-                    }).toList(),
+                    items: ROLE_ENUM.values
+      .where((role) => role != ROLE_ENUM.administrateur) // Filter out "administrateur"
+      .map((ROLE_ENUM role) {
+    return DropdownMenuItem<ROLE_ENUM>(
+      value: role,
+      child: Text(role.toString().split('.').last),
+    );
+  }).toList(),
                     onChanged: (ROLE_ENUM? value) {
                       setState(() {
                         selectedRole = value;

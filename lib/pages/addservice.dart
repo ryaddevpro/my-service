@@ -23,6 +23,7 @@ class _AddServicePageState extends State<AddServicePage> {
   final _availabilityController = TextEditingController();
   final _categoryController = TextEditingController();
   final _prixController = TextEditingController();
+  final _disponibiliteController = TextEditingController(); // Added for disponibilite
 
   final _serviceDAO = ServiceDAO();
 
@@ -56,11 +57,13 @@ class _AddServicePageState extends State<AddServicePage> {
     String serviceName = _serviceNameController.text;
     String description = _descriptionController.text;
     String category = _categoryController.text;
+    String disponibilite = _availabilityController.text;
 
     Service newService = Service(
       nom: serviceName,
       description: description,
       categorie: category,
+      disponibilite: disponibilite, // Include disponibilite
       image: _base64Image,
       prix: double.tryParse(_prixController.text),
       cree_par: await getUserId(),
@@ -102,11 +105,13 @@ class _AddServicePageState extends State<AddServicePage> {
     String serviceName = _serviceNameController.text;
     String description = _descriptionController.text;
     String category = _categoryController.text;
+    String disponibilite = _availabilityController.text; // Added for update
 
     Service updatedService = Service(
       id: widget.service?.id, // Use the existing service ID
       nom: serviceName,
       description: description,
+      disponibilite: disponibilite, // Include disponibilite
       categorie: category,
       image: _base64Image,
       prix: double.tryParse(_prixController.text),
@@ -141,7 +146,7 @@ class _AddServicePageState extends State<AddServicePage> {
       _serviceNameController.text = widget.service!.nom ?? '';
       _descriptionController.text = widget.service!.description ?? '';
       _availabilityController.text =
-          widget.service!.description ?? ''; // Update as necessary
+          widget.service!.disponibilite ?? ''; // Update with disponibilite
       _categoryController.text = widget.service!.categorie ?? '';
       _prixController.text = widget.service!.prix?.toString() ?? '';
       _base64Image = widget.service!.image;
@@ -233,7 +238,6 @@ class _AddServicePageState extends State<AddServicePage> {
               else
                 const Text('Aucune image sélectionnée'),
               const SizedBox(height: 30),
-
               // Show loader if _isLoading is true
               _isLoading
                   ? Center(child: CircularProgressIndicator())

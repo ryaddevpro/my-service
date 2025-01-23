@@ -66,10 +66,15 @@ class _ReservationPageState extends State<ReservationPage> {
       Service? service =
           await serviceDAO.getServiceById("${reservation.service_id}");
 
+      Utilisateur? prestataireName =
+          await userDAO.getUserById("${reservation.prestataire_id}");
+
       if (user != null && service != null) {
         setState(() {
           clientNames[reservation.client_id] = user.nom;
           clientNames[reservation.service_id] = service.nom;
+          clientNames[reservation.prestataire_id] = prestataireName?.nom;
+
           reservation.serviceDetails = service;
         });
       }
@@ -99,6 +104,21 @@ class _ReservationPageState extends State<ReservationPage> {
   Future<void> _loadUtilisateur() async {
     utilisateur = await SharedPreferencesHelper.getUtilisateur('user');
     await getAllReservations();
+  }
+
+  Color _getEnumColor(String? statut) {
+    switch (statut) {
+      case "EN_ATTENTE":
+        return Colors.orange; // Pending
+      case "EN_COURS":
+        return Colors.blue; // In Progress
+      case "FINI":
+        return Colors.green; // Finished
+      case "REFUSE":
+        return Colors.red; // Refused
+      default:
+        return Colors.black; // Default color
+    }
   }
 
   @override
@@ -147,6 +167,8 @@ class _ReservationPageState extends State<ReservationPage> {
     String serviceName = reservation.serviceDetails?.nom ?? 'Unknown Service';
     String serviceImage = reservation.serviceDetails?.image ?? '';
     double servicePrice = reservation.serviceDetails?.prix ?? 0.0;
+    String prestataireName =
+        clientNames[reservation.prestataire_id] ?? 'Unknown Customer';
 
     TextEditingController commentController = TextEditingController();
     TextEditingController ratingController = TextEditingController();
@@ -173,7 +195,7 @@ class _ReservationPageState extends State<ReservationPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Prestataire: ${reservation.prestataire_id}',
+                    'Prestataire: ${prestataireName}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 8),
@@ -205,9 +227,20 @@ class _ReservationPageState extends State<ReservationPage> {
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Status: ${reservation.statut.toString().split('.').last}',
-                    style: const TextStyle(fontSize: 16),
+
+                  Row(
+                    spacing: 4.0,
+                    children: [
+                      Text("Status: "),
+                      Text(
+                        '${reservation.statut.toString().split('.').last}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: _getEnumColor(
+                              reservation.statut.toString().split('.').last),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
 
@@ -266,44 +299,43 @@ class _ReservationPageState extends State<ReservationPage> {
                     ],
                   ),
                   if (utilisateur?.role != ROLE_ENUM.client)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              DropdownButton<RESEVATION_ENUM>(
-                                value: reservation.statut,
-                                onChanged: isUpdating
-                                    ? null
-                                    : (RESEVATION_ENUM? newStatus) async {
-                                        if (newStatus != null) {
-                                          setState(() {
-                                            isUpdating = true;
-                                            reservation.statut = newStatus;
-                                          });
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        DropdownButton<RESEVATION_ENUM>(
+                          value: reservation.statut,
+                          onChanged: isUpdating
+                              ? null
+                              : (RESEVATION_ENUM? newStatus) async {
+                                  if (newStatus != null) {
+                                    setState(() {
+                                      isUpdating = true;
+                                      reservation.statut = newStatus;
+                                    });
 
-                                          await reservationDAO
-                                              .updateReservation(reservation);
+                                    await reservationDAO
+                                        .updateReservation(reservation);
 
-                                          await Future.delayed(
-                                              const Duration(seconds: 4));
-                                          setState(() {
-                                            isUpdating = false;
-                                          });
+                                    await Future.delayed(
+                                        const Duration(seconds: 4));
+                                    setState(() {
+                                      isUpdating = false;
+                                    });
 
-                                          showMessage(
-                                              "Reservation updated successfully");
-                                        }
-                                      },
-                                items: RESEVATION_ENUM.values
-                                    .map((RESEVATION_ENUM statut) {
-                                  return DropdownMenuItem<RESEVATION_ENUM>(
-                                    value: statut,
-                                    child:
-                                        Text(statut.toString().split('.').last),
-                                  );
-                                }).toList(),
-                              ),
-                            ],
-                          ),
+                                    showMessage(
+                                        "Reservation updated successfully");
+                                  }
+                                },
+                          items: RESEVATION_ENUM.values
+                              .map((RESEVATION_ENUM statut) {
+                            return DropdownMenuItem<RESEVATION_ENUM>(
+                              value: statut,
+                              child: Text(statut.toString().split('.').last),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
                   // Add comment and rating inputs if client
                   if (utilisateur?.role == ROLE_ENUM.client &&
                       reservation.statut == RESEVATION_ENUM.FINI)
@@ -326,7 +358,6 @@ class _ReservationPageState extends State<ReservationPage> {
                           ),
                           keyboardType: TextInputType.number,
                         ),
-                        
                         const SizedBox(height: 8),
                         ElevatedButton(
                           onPressed: () async {

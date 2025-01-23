@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:my_service/models/utilisateur.dart';
-import 'package:my_service/pages/addservice.dart';
-import 'package:my_service/pages/avis_page.dart';
-import 'package:my_service/pages/base_page.dart';
-import 'package:my_service/pages/disponibilite.dart';
-import 'package:my_service/pages/profile.dart';
-import 'package:my_service/pages/reservation.dart';
-import 'package:my_service/pages/services/services_page.dart';
+import 'package:my_service/pages/manage_users.dart';
+import 'package:my_service/pages/manage_services.dart';
+import 'package:my_service/pages/view_stats.dart';
+import 'package:my_service/pages/settings.dart';
 import 'package:my_service/utils/shared_preferences.dart';
+import 'package:my_service/pages/base_page.dart';
 
-class PrestataireDashboard extends StatefulWidget {
-  const PrestataireDashboard({super.key});
+class AdminDashboard extends StatefulWidget {
+  const AdminDashboard({super.key});
 
   @override
-  State<PrestataireDashboard> createState() => _PrestataireDashboardState();
+  State<AdminDashboard> createState() => _AdminDashboardState();
 }
 
-class _PrestataireDashboardState extends State<PrestataireDashboard> {
+class _AdminDashboardState extends State<AdminDashboard> {
   late Future<Utilisateur?> utilisateurFuture;
 
   @override
@@ -28,7 +26,7 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      title: "Tableau de bord",
+      title: "Tableau de bord Admin",
       body: FutureBuilder<Utilisateur?>(
         future: utilisateurFuture,
         builder: (context, snapshot) {
@@ -37,11 +35,11 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
           }
 
           if (snapshot.hasError) {
-            return const Center(child: Text('Error loading user data'));
+            return const Center(child: Text('Erreur de chargement des données'));
           }
 
           if (!snapshot.hasData) {
-            return const Center(child: Text('No user data found'));
+            return const Center(child: Text('Aucune donnée utilisateur trouvée'));
           }
 
           final utilisateur = snapshot.data!;
@@ -52,7 +50,7 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bienvenue : ${utilisateur.role?.name} ${utilisateur.nom} !',
+                  'Bienvenue, Administrateur ${utilisateur.nom} !',
                   style: const TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -64,7 +62,7 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
-                    children: _getDashboardCards(utilisateur.role),
+                    children: _getDashboardCards(),
                   ),
                 ),
               ],
@@ -75,29 +73,17 @@ class _PrestataireDashboardState extends State<PrestataireDashboard> {
     );
   }
 
-  List<Widget> _getDashboardCards(ROLE_ENUM? role) {
-    // Common cards for all roles
-    final commonCards = [
-      _dashboardCard(Icons.person, 'Profil',
-          () => _navigateTo(context, const ProfilPage())),
-      _dashboardCard(Icons.receipt, 'Réservations',
-          () => _navigateTo(context, ReservationPage())),
-      _dashboardCard(Icons.add_business, 'Tous nos Services',
-          () => _navigateTo(context, ServicesPage())),
+  List<Widget> _getDashboardCards() {
+    return [
+      _dashboardCard(Icons.person, 'Gérer Utilisateurs',
+              () => _navigateTo(context, const ManageUsersPage())),
+      _dashboardCard(Icons.category, 'Gérer Services',
+              () => _navigateTo(context, const ManageServicesPage())),
+      // _dashboardCard(Icons.analytics, 'Voir Statistiques',
+      //         () => _navigateTo(context, const ViewStatsPage())),
+      // _dashboardCard(Icons.settings, 'Paramètres',
+      //         () => _navigateTo(context, const SettingsPage())),
     ];
-
-    // Additional cards for 'prestataire' and 'admin' roles
-    print(role);
-    if (role == ROLE_ENUM.prestataire || role == ROLE_ENUM.administrateur) {
-      final additionalCards = [
-        _dashboardCard(Icons.add_circle_outline, 'Ajouter un Service',
-            () => _navigateTo(context, AddServicePage())),
-      ];
-      return commonCards + additionalCards;
-    }
-
-    // Return only the common cards for 'client' role
-    return commonCards;
   }
 
   Widget _dashboardCard(IconData icon, String title, VoidCallback onTap) {

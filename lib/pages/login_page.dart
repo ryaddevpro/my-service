@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_service/DAO/utilisateur.dart';
 import 'package:my_service/components/my_textfield.dart';
+import 'package:my_service/pages/admin_dashboard.dart';
 import 'package:my_service/pages/register_page.dart';
 import 'package:my_service/pages/services/services_page.dart';
 import 'package:my_service/utils/snack_msg.dart';
@@ -28,12 +29,22 @@ class _LoginPageState extends State<LoginPage> {
 
     if (isSuccess) {
       // Navigate to the Dashboard if login is successful
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ServicesPage(),
-        ),
-      );
+
+      if (email == "admin@gmail.com" && password == "admin") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AdminDashboard(),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ServicesPage(),
+          ),
+        );
+      }
     } else {
       // Optionally show an error message or perform another action on failure
       showMessage("Login failed. Please check your credentials.",

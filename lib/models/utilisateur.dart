@@ -1,6 +1,6 @@
 import 'package:my_service/models/service.dart';
 
-enum ROLE_ENUM { admin, prestataire, client }
+enum ROLE_ENUM { administrateur, prestataire, client }
 
 class Utilisateur {
   final String? id;

@@ -2,6 +2,7 @@ import 'package:my_service/DAO/generic.dart';
 import 'package:my_service/models/utilisateur.dart';
 import 'package:my_service/utils/shared_preferences.dart';
 import 'package:my_service/utils/snack_msg.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UtilisateurDAO {
   final GenericDAO<Utilisateur> _utilisateurDAO =
@@ -52,7 +53,6 @@ class UtilisateurDAO {
     return await _utilisateurDAO.update("id", id, user.toJson());
   }
 
-  // Delete a user
   Future<bool> deleteUser(String email) async {
     // Check if the user exists by email first
     final existingUser = await getUserByEmail(email);
@@ -61,8 +61,63 @@ class UtilisateurDAO {
       return false;
     }
 
-    // Proceed with the deletion if user exists
-    return await _utilisateurDAO.delete("email", email);
+    final userId =
+        existingUser.id; // Assuming `id` is the user's unique identifier
+
+    // Retrieve reservations made by the user
+    final reservations = await Supabase.instance.client
+        .from('reservation')
+        .select('id')
+        .eq('client_id', "${userId}");
+
+    for (var reservation in reservations) {
+      final reservationId = reservation['id'];
+
+      // Delete related 'avis' entries first
+      final avisDeleteResponse = await Supabase.instance.client
+          .from('avis')
+          .delete()
+          .eq('reservation_id', reservationId);
+
+      if (avisDeleteResponse != null) {
+        showMessage(
+            "Failed to delete related avis for reservation $reservationId",
+            isError: true);
+        return false;
+      }
+    }
+
+    // After deleting 'avis' entries, delete 'reservation' entries
+    final reservationDeleteResponse = await Supabase.instance.client
+        .from('reservation')
+        .delete()
+        .eq('client_id', "${userId}");
+
+    if (reservationDeleteResponse != null) {
+      showMessage("Failed to delete related reservations", isError: true);
+      return false;
+    }
+
+    // Delete related records in the 'service' table
+    final serviceDeleteResponse = await Supabase.instance.client
+        .from('service')
+        .delete()
+        .eq('cree_par', "${userId}");
+
+    if (serviceDeleteResponse != null) {
+      showMessage("Failed to delete related services", isError: true);
+      return false;
+    }
+
+    // Proceed with deleting the user
+    final userDeleteResponse = await _utilisateurDAO.delete("email", email);
+
+    if (!userDeleteResponse) {
+      showMessage("Failed to delete the user", isError: true);
+      return false;
+    }
+
+    return true;
   }
 
   // Login handle

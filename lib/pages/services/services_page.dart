@@ -143,167 +143,150 @@ class _ServicesPageState extends State<ServicesPage> {
   }
 
   // Service Card Widget
-  Widget _buildServiceCard(Service service) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Service Image Placeholder (if the image is in Base64 format)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: service.image != null && service.image!.isNotEmpty
-                  ? Image.memory(
-                      base64Decode(service.image!),
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    )
-                  : Icon(Icons.image, size: 80, color: Colors.grey),
-            ),
-            const SizedBox(width: 16),
-            // Service Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    service.nom ?? 'No Name',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    service.description ?? 'No Description',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                  ),
-                  const SizedBox(height: 8),
-                ],
+ Widget _buildServiceCard(Service service) {
+  return Card(
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    elevation: 4,
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Service Image and Details
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Service Image Placeholder
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: service.image != null && service.image!.isNotEmpty
+                    ? Image.memory(
+                        base64Decode(service.image!),
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        width: 80,
+                        height: 80,
+                        color: Colors.grey[300],
+                        child: Icon(Icons.image, size: 40, color: Colors.grey),
+                      ),
               ),
-            ),
-            const SizedBox(width: 8),
-            // Rating and Button
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+              const SizedBox(width: 16),
+              // Service Details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.star, color: Colors.amber, size: 18),
-                    const SizedBox(width: 4),
                     Text(
-                      '0.0',
+                      service.nom ?? 'No Name',
                       style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[800],
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      service.description ?? 'No Description',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      service.disponibilite ?? 'No Availability',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  spacing: 4,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return ServiceDetailPage(service: service);
-                        }));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Buttons (View, Delete, Update) aligned at the bottom
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return ServiceDetailPage(service: service);
+                  }));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text("View",
+                          style: TextStyle(color : Colors.white),),
+              ),
+              FutureBuilder<String?>(
+                future: getUserId(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+
+                  final userId = snapshot.data;
+
+                  if (service.cree_par == userId) {
+                    return Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return AddServicePage(service: service);
+                            }));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurpleAccent,
+                            
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text("Update",
+                          style: TextStyle(color : Colors.white),),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                      ),
-                      child: Text(
-                        "View",
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                    ),
-                  ],
-                ),
-                FutureBuilder<String?>(
-                  future: getUserId(), // Async call to get user ID
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Show loading while fetching user ID
-                    }
-
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    }
-
-                    final userId = snapshot.data;
-
-                    return service.cree_par == userId
-                        ? Row(
-                            spacing: 4.0,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  deleteService(service);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.redAccent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                ),
-                                child: Text(
-                                  "Delete",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 14),
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return AddServicePage(service: service);
-                                  }));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.deepPurpleAccent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                ),
-                                child: Text(
-                                  "Update",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 14),
-                                ),
-                              )
-                            ],
-                          )
-                        : Container(); // Return an empty container if user IDs don't match
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            deleteService(service);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text("Delete",
+                          style: TextStyle(color : Colors.white),),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return SizedBox(); // Empty space if user IDs don't match
+                  }
+                },
+              ),
+            ],
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
