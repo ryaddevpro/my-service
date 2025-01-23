@@ -164,6 +164,8 @@ class _ReservationPageState extends State<ReservationPage> {
   Widget _buildReservationCard(Reservation reservation) {
     String customerName =
         clientNames[reservation.client_id] ?? 'Unknown Customer';
+          String prestataireName =
+        clientNames[reservation.prestataire_id] ?? 'Unknown Customer';
     String serviceName = reservation.serviceDetails?.nom ?? 'Unknown Service';
     String serviceImage = reservation.serviceDetails?.image ?? '';
     double servicePrice = reservation.serviceDetails?.prix ?? 0.0;
@@ -195,6 +197,7 @@ class _ReservationPageState extends State<ReservationPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
+                    'Prestataire: ${prestataireName}',
                     'Prestataire: ${prestataireName}',
                     style: const TextStyle(fontSize: 16),
                   ),
@@ -312,7 +315,22 @@ class _ReservationPageState extends State<ReservationPage> {
                                       isUpdating = true;
                                       reservation.statut = newStatus;
                                     });
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        DropdownButton<RESEVATION_ENUM>(
+                          value: reservation.statut,
+                          onChanged: isUpdating
+                              ? null
+                              : (RESEVATION_ENUM? newStatus) async {
+                                  if (newStatus != null) {
+                                    setState(() {
+                                      isUpdating = true;
+                                      reservation.statut = newStatus;
+                                    });
 
+                                    await reservationDAO
+                                        .updateReservation(reservation);
                                     await reservationDAO
                                         .updateReservation(reservation);
 
@@ -321,7 +339,26 @@ class _ReservationPageState extends State<ReservationPage> {
                                     setState(() {
                                       isUpdating = false;
                                     });
+                                    await Future.delayed(
+                                        const Duration(seconds: 4));
+                                    setState(() {
+                                      isUpdating = false;
+                                    });
 
+                                    showMessage(
+                                        "Reservation updated successfully");
+                                  }
+                                },
+                          items: RESEVATION_ENUM.values
+                              .map((RESEVATION_ENUM statut) {
+                            return DropdownMenuItem<RESEVATION_ENUM>(
+                              value: statut,
+                              child: Text(statut.toString().split('.').last),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
                                     showMessage(
                                         "Reservation updated successfully");
                                   }
